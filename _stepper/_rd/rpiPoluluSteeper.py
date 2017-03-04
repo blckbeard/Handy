@@ -16,50 +16,53 @@
 # default the easy driver 4.4 is in 1/8 microstep mode. However the stepper driver
 # selected by gtaagii will default to one full step per step pulse, microstepping can
 # be selected if desired.
-#------------------------------------------------------------------------
+# command :
+#                           
+# python rpiPoluluStepper.py direction step stepsGPIO dirGPIO
+# direction -> left or right
+# steps -> integer 200 for example
+# stepsGPIO -> le GPIO used for define step of motor(by default 23)
+# dirGPIO -> le GPIO used for define sens of motor(by default 24)
+# 
 #------------------------------------------------------------------------
  
 #Step 1: Import necessary libraries
-#------------------------------------------------------------------------
 #------------------------------------------------------------------------
 import sys
 import RPi.GPIO as gpio #https://pypi.python.org/pypi/RPi.GPIO more info
 import time
 #------------------------------------------------------------------------
-#------------------------------------------------------------------------
  
 #Step 2: Read arguements https://www.youtube.com/watch?v=kQFKtI6gn9Y
-#------------------------------------------------------------------------
 #------------------------------------------------------------------------
 #read the direction and number of steps; if steps are 0 exit
 try:
     direction = sys.argv[1] #'left' or 'right'
     steps = int(float(sys.argv[2])) #'200' value
+    stepsGPIO = int(float(sys.argv[4]))
+    dirGPIO = int(float(sys.argv[3]))
+    delay = float(sys.argv[5])
 except:
     direction = 'left'
     steps = 0
- 
+    stepsGPIO = 23
+    dirGPIO = 24
+    delay = 0.05 #0.000001
 #print which direction and how many steps
 print("You told me to turn %s %s steps.") % (direction, steps)
 #------------------------------------------------------------------------
-#------------------------------------------------------------------------
- 
  
 #Step 3: Setup the raspberry pi's GPIOs
 #------------------------------------------------------------------------
-#------------------------------------------------------------------------
 #use the broadcom layout for the gpio
 gpio.setmode(gpio.BCM)
-#GPIO23 = Direction
-#GPIO24 = Step
+#GPIO23 = Step
+#GPIO24 = Direction
 gpio.setup(23, gpio.OUT)
 gpio.setup(24, gpio.OUT)
 #------------------------------------------------------------------------
-#------------------------------------------------------------------------
- 
- 
+
 #Step 4: Set direction of rotation
-#------------------------------------------------------------------------
 #------------------------------------------------------------------------
 #set the output to true for left and false for right
 if direction == 'left':
@@ -67,23 +70,17 @@ if direction == 'left':
 elif direction == 'right':
     gpio.output(24, False)
 #------------------------------------------------------------------------
-#------------------------------------------------------------------------
- 
- 
+
 #Step 5: Setup step counter and speed control variables
-#------------------------------------------------------------------------
 #------------------------------------------------------------------------
 #track the numebr of steps taken
 StepCounter = 0
  
 #waittime controls speed
-WaitTime = 0.000001
+WaitTime =  delay #0.000001
 #------------------------------------------------------------------------
-#------------------------------------------------------------------------
- 
- 
+
 #Step 6: Let the magic happen
-#------------------------------------------------------------------------
 #------------------------------------------------------------------------
 # Start main loop
 while StepCounter < steps:
@@ -96,13 +93,8 @@ while StepCounter < steps:
     #Wait before taking the next step...this controls rotation speed
     time.sleep(WaitTime)
 #------------------------------------------------------------------------
-#------------------------------------------------------------------------
- 
- 
 #Step 7: Clear the GPIOs so that some other program might enjoy them
-#------------------------------------------------------------------------
 #------------------------------------------------------------------------
 #relase the GPIO
 gpio.cleanup()
-#------------------------------------------------------------------------
 #------------------------------------------------------------------------
