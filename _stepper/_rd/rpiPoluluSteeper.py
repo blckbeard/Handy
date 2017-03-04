@@ -63,9 +63,9 @@ gpio.setup(24, gpio.OUT)
 #------------------------------------------------------------------------
 #set the output to true for left and false for right
 if direction == 'left':
-    gpio.output(23, True)
+    gpio.output(24, True)
 elif direction == 'right':
-    gpio.output(23, False)
+    gpio.output(24, False)
 #------------------------------------------------------------------------
 #------------------------------------------------------------------------
  
@@ -89,8 +89,8 @@ WaitTime = 0.000001
 while StepCounter < steps:
  
     #turning the gpio on and off tells the easy driver to take one step
-    gpio.output(24, True)
-    gpio.output(24, False)
+    gpio.output(23, True)
+    gpio.output(23, False)
     StepCounter += 1
  
     #Wait before taking the next step...this controls rotation speed
